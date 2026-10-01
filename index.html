@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Muhammad Faris Zacky - Portofolio Software QA</title>
+<meta name="description" content="Portofolio Software QA: studi kasus pengujian Website Pendaftaran Online TK Aqila (Black Box Testing, UAT, survei kepuasan).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #F3F6F9;
+  --surface: #FFFFFF;
+  --ink: #13202B;
+  --muted: #52636F;
+  --line: #D3DCE4;
+  --accent: #1F4FD8;
+  --accent-ink: #FFFFFF;
+  --pass: #17794F;
+  --pass-bg: #DDF2E7;
+  --warn: #9A5B00;
+  --warn-bg: #FBEBC8;
+  --head: "Bricolage Grotesque", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --body: "Public Sans", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F161C;
+    --surface: #16202A;
+    --ink: #E7EEF4;
+    --muted: #9DB0BF;
+    --line: #2A3946;
+    --accent: #7FA2FF;
+    --accent-ink: #0F161C;
+    --pass: #5FD39A;
+    --pass-bg: #12382A;
+    --warn: #F0B75A;
+    --warn-bg: #3A2B0E;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F161C;
+  --surface: #16202A;
+  --ink: #E7EEF4;
+  --muted: #9DB0BF;
+  --line: #2A3946;
+  --accent: #7FA2FF;
+  --accent-ink: #0F161C;
+  --pass: #5FD39A;
+  --pass-bg: #12382A;
+  --warn: #F0B75A;
+  --warn-bg: #3A2B0E;
+}
+html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 64px); height: 100%; }
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-text-size-adjust: 100%;
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+/* Navigasi */
+.nav {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; }
+.nav strong { font-family: var(--head); font-weight: 800; letter-spacing: -0.01em; white-space: nowrap; }
+.nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 18px; overflow-x: auto; }
+.nav li a { color: var(--muted); text-decoration: none; font-size: .92rem; white-space: nowrap; padding: 8px 0; display: inline-block; }
+.nav li a:hover { color: var(--ink); }
+
+/* Hero */
+.hero { padding: 64px 0 56px; }
+h1 {
+  font-family: var(--head);
+  font-weight: 800;
+  font-size: clamp(2.5rem, 8vw, 4.9rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  margin: 0 0 20px;
+  max-width: 14ch;
+}
+.role { font-family: var(--head); font-weight: 600; font-size: clamp(1.15rem, 2.6vw, 1.5rem); margin: 0 0 18px; letter-spacing: -0.01em; }
+.lead { max-width: 62ch; color: var(--muted); font-size: 1.06rem; margin: 0 0 28px; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 44px; }
+.btn {
+  display: inline-block; padding: 12px 20px; border-radius: 8px; font-weight: 600; text-decoration: none;
+  border: 2px solid var(--accent); font-size: .98rem;
+}
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { color: var(--accent); background: transparent; }
+
+/* Strip eksekusi uji */
+.run { border-top: 1px solid var(--line); padding-top: 24px; }
+.run-title { font-family: var(--head); font-weight: 600; font-size: 1.05rem; margin: 0 0 14px; }
+.strip { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-bottom: 12px; }
+.group { display: flex; gap: 5px; }
+.sq {
+  width: 22px; height: 22px; border-radius: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 12px; line-height: 1; font-weight: 700;
+  background: var(--pass-bg); color: var(--pass); border: 1px solid var(--pass);
+  animation: lulus .35s ease-out both;
+  animation-delay: calc(var(--i) * 55ms);
+}
+@keyframes lulus {
+  from { background: transparent; color: transparent; border-color: var(--line); }
+  to { background: var(--pass-bg); color: var(--pass); border-color: var(--pass); }
+}
+.run-cap { color: var(--muted); font-size: .9rem; margin: 0; }
+
+/* Bagian */
+.block { padding: 56px 0; border-top: 1px solid var(--line); }
+h2 { font-family: var(--head); font-weight: 800; font-size: clamp(1.7rem, 4vw, 2.3rem); letter-spacing: -0.025em; line-height: 1.1; margin: 0 0 20px; }
+h3 { font-family: var(--head); font-weight: 600; font-size: 1.3rem; letter-spacing: -0.015em; margin: 44px 0 12px; }
+p { margin: 0 0 16px; max-width: 70ch; }
+.muted { color: var(--muted); }
+
+dl.facts { display: grid; grid-template-columns: minmax(110px, 170px) 1fr; gap: 10px 20px; margin: 0 0 8px; max-width: 760px; }
+dl.facts dt { color: var(--muted); font-weight: 500; }
+dl.facts dd { margin: 0; }
+
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); margin: 8px 0 12px; }
+table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: .9rem; line-height: 1.5; }
+table.wide { min-width: 900px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+th { background: var(--bg); font-weight: 600; font-size: .85rem; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.id { font-weight: 600; white-space: nowrap; }
+.chip {
+  display: inline-block; padding: 2px 9px; border-radius: 99px; white-space: nowrap;
+  background: var(--pass-bg); color: var(--pass); font-weight: 600; font-size: .8rem;
+}
+.tag { display: inline-block; padding: 1px 8px; border-radius: 6px; font-size: .78rem; font-weight: 600; white-space: nowrap; border: 1px solid var(--line); color: var(--muted); }
+.tag.neg { border-color: var(--warn); color: var(--warn); background: var(--warn-bg); }
+.note { color: var(--muted); font-size: .88rem; margin: 0 0 16px; }
+
+ol.sprints { list-style: none; counter-reset: s; margin: 0 0 8px; padding: 0; max-width: 760px; }
+ol.sprints li { counter-increment: s; display: grid; grid-template-columns: 96px 1fr; gap: 4px 18px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+ol.sprints li:first-child { border-top: 1px solid var(--line); }
+ol.sprints li::before { content: "Sprint " counter(s); font-family: var(--head); font-weight: 600; }
+ol.sprints span.dur { color: var(--muted); }
+
+dl.approach { margin: 0; max-width: 760px; }
+dl.approach dt { font-family: var(--head); font-weight: 600; margin-top: 16px; }
+dl.approach dd { margin: 4px 0 0; }
+
+/* Hasil */
+.kpis { display: flex; flex-wrap: wrap; gap: 14px 36px; margin: 8px 0 28px; }
+.kpi b { display: block; font-family: var(--head); font-weight: 800; font-size: 2rem; letter-spacing: -0.03em; line-height: 1.1; }
+.kpi span { color: var(--muted); font-size: .9rem; }
+.bars { display: grid; gap: 14px; max-width: 760px; margin: 0 0 12px; }
+.bar { display: grid; grid-template-columns: 1fr 60px; gap: 4px 12px; align-items: center; }
+.bar .lab { grid-column: 1 / -1; font-size: .94rem; }
+.track { height: 12px; background: var(--line); border-radius: 6px; overflow: hidden; }
+.fill { height: 100%; background: var(--accent); border-radius: 6px; }
+.fill.low { background: var(--warn); }
+.bar .val { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.insight { border-left: 4px solid var(--warn); background: var(--surface); padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 28px 0 8px; max-width: 760px; }
+.insight h4 { font-family: var(--head); font-size: 1.1rem; margin: 0 0 8px; }
+.insight p:last-child { margin-bottom: 0; }
+
+ul.plain { margin: 0 0 16px; padding-left: 1.2rem; max-width: 70ch; }
+ul.plain li { margin-bottom: 10px; }
+
+dl.skills { display: grid; grid-template-columns: minmax(120px, 190px) 1fr; gap: 14px 20px; max-width: 800px; margin: 0; }
+dl.skills dt { font-family: var(--head); font-weight: 600; }
+dl.skills dd { margin: 0; }
+
+footer { border-top: 1px solid var(--line); padding: 40px 0 56px; color: var(--muted); font-size: .92rem; }
+footer p { margin-bottom: 6px; }
+
+@media (max-width: 640px) {
+  .hero { padding: 40px 0 40px; }
+  .sq { width: 18px; height: 18px; font-size: 10px; }
+  dl.facts, dl.skills { grid-template-columns: 1fr; gap: 2px; }
+  dl.facts dd, dl.skills dd { margin-bottom: 12px; }
+  ol.sprints li { grid-template-columns: 1fr; }
+  .nav strong { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sq { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <strong>Faris Zacky</strong>
+    <nav aria-label="Navigasi utama">
+      <ul>
+        <li><a href="#ringkasan">Ringkasan</a></li>
+        <li><a href="#studi-kasus">Studi kasus</a></li>
+        <li><a href="#test-case">Test case</a></li>
+        <li><a href="#hasil">Hasil</a></li>
+        <li><a href="#retrospektif">Retrospektif</a></li>
+        <li><a href="#keahlian">Keahlian</a></li>
+        <li><a href="#kontak">Kontak</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <h1>Muhammad Faris Zacky</h1>
+    <p class="role">Calon Software QA Engineer, lulusan Teknik Informatika, Bogor</p>
+    <p class="lead">Saya menguji sistem pendaftaran online TK Aqila dengan 12 test case Black Box, 14 skenario UAT, dan survei kepuasan 20 pengguna. Halaman ini menunjukkan cara saya merancang, menjalankan, dan mengevaluasi pengujiannya, termasuk bagian yang masih bisa saya perbaiki.</p>
+    <div class="actions">
+      <a class="btn primary" href="#studi-kasus">Lihat studi kasus</a>
+      <a class="btn ghost" href="mailto:fariszaky411@gmail.com">Hubungi saya</a>
+    </div>
+
+    <div class="run">
+      <p class="run-title">Eksekusi uji pada studi kasus: 26 dari 26 skenario lulus</p>
+      <div class="strip" role="img" aria-label="26 skenario uji, semuanya lulus: 12 Black Box, 7 UAT wali murid, 7 UAT admin">
+        <div class="group" aria-hidden="true">
+          <span class="sq" style="--i:0" title="TC-01">&#10003;</span><span class="sq" style="--i:1" title="TC-02">&#10003;</span><span class="sq" style="--i:2" title="TC-03">&#10003;</span><span class="sq" style="--i:3" title="TC-04">&#10003;</span><span class="sq" style="--i:4" title="TC-05">&#10003;</span><span class="sq" style="--i:5" title="TC-06">&#10003;</span><span class="sq" style="--i:6" title="TC-07">&#10003;</span><span class="sq" style="--i:7" title="TC-08">&#10003;</span><span class="sq" style="--i:8" title="TC-09">&#10003;</span><span class="sq" style="--i:9" title="TC-10">&#10003;</span><span class="sq" style="--i:10" title="TC-11">&#10003;</span><span class="sq" style="--i:11" title="TC-12">&#10003;</span>
+        </div>
+        <div class="group" aria-hidden="true">
+          <span class="sq" style="--i:12" title="UAT wali murid 1">&#10003;</span><span class="sq" style="--i:13" title="UAT wali murid 2">&#10003;</span><span class="sq" style="--i:14" title="UAT wali murid 3">&#10003;</span><span class="sq" style="--i:15" title="UAT wali murid 4">&#10003;</span><span class="sq" style="--i:16" title="UAT wali murid 5">&#10003;</span><span class="sq" style="--i:17" title="UAT wali murid 6">&#10003;</span><span class="sq" style="--i:18" title="UAT wali murid 7">&#10003;</span>
+        </div>
+        <div class="group" aria-hidden="true">
+          <span class="sq" style="--i:19" title="UAT admin 1">&#10003;</span><span class="sq" style="--i:20" title="UAT admin 2">&#10003;</span><span class="sq" style="--i:21" title="UAT admin 3">&#10003;</span><span class="sq" style="--i:22" title="UAT admin 4">&#10003;</span><span class="sq" style="--i:23" title="UAT admin 5">&#10003;</span><span class="sq" style="--i:24" title="UAT admin 6">&#10003;</span><span class="sq" style="--i:25" title="UAT admin 7">&#10003;</span>
+        </div>
+      </div>
+      <p class="run-cap">Kiri ke kanan: 12 Black Box, 7 UAT wali murid, 7 UAT admin.</p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="ringkasan">
+  <div class="wrap">
+    <h2>Ringkasan</h2>
+    <p>Saya fresh graduate Teknik Informatika yang ingin berkarier di software QA. Pengalaman pengujian saya berasal dari tugas akhir: saya membangun sebuah website, lalu merancang test case, menjalankan pengujian, dan menganalisis hasilnya bersama pengguna nyata dari sekolah.</p>
+    <p>Selain pengujian fungsional, saya sedang memperdalam cyber security dan sudah memahami fundamentalnya. Saya ingin membawa sudut pandang itu ke pengujian, misalnya saat memeriksa validasi input dan akses halaman.</p>
+    <dl class="facts">
+      <dt>Pendidikan</dt>
+      <dd>S1 Teknik Informatika, Sekolah Tinggi Teknologi Terpadu Nurul Fikri (September 2022 sampai Juni 2026)</dd>
+      <dt>Tugas akhir</dt>
+      <dd>Rancang Bangun Front End Pendaftaran Online PAUD pada TK Aqila Kabupaten Bogor Menggunakan Laravel Framework dengan Metode Agile Software Development</dd>
+      <dt>Domisili</dt>
+      <dd>Bogor, Jawa Barat</dd>
+    </dl>
+  </div>
+</section>
+
+<section class="block" id="studi-kasus">
+  <div class="wrap">
+    <h2>Studi kasus: Website Pendaftaran Online TK Aqila</h2>
+    <dl class="facts">
+      <dt>Peran</dt>
+      <dd>Pengembang front end sekaligus penguji fungsional (Black Box). UAT dan survei dijalankan oleh pengguna dari sekolah.</dd>
+      <dt>Metode</dt>
+      <dd>Agile Software Development, 4 sprint (total 6 minggu)</dd>
+      <dt>Teknologi</dt>
+      <dd>Laravel (PHP 8), TailwindCSS, MySQL, Git dan GitHub, Visual Studio Code</dd>
+      <dt>Situs</dt>
+      <dd><a href="https://tkaqila.my.id/" target="_blank" rel="noopener noreferrer">tkaqila.my.id</a></dd>
+    </dl>
+
+    <h3>Masalah yang diselesaikan</h3>
+    <p>Pendaftaran siswa baru di TK Aqila dilakukan manual dengan kertas. Staf sekolah kurang efisien, dan orang tua sulit mendaftar maupun memantau status pendaftaran anaknya. Sistem ini mendigitalkan alur tersebut: informasi sekolah, formulir pendaftaran dengan validasi otomatis, indikator status pendaftaran, dan dashboard admin.</p>
+
+    <h3>Kebutuhan dan prioritas (product backlog)</h3>
+    <p>Kebutuhan saya kumpulkan lewat observasi, studi lapangan, dan wawancara dengan pihak sekolah, lalu saya tulis sebagai user story dengan prioritas.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>No</th><th>User story</th><th>Fitur</th><th>Prioritas</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Pengunjung melihat informasi TK Aqila</td><td>Beranda</td><td>High</td></tr>
+          <tr><td>2</td><td>Pengunjung melihat profil sekolah</td><td>Profil Sekolah</td><td>High</td></tr>
+          <tr><td>3</td><td>Pengunjung melihat jadwal kegiatan</td><td>Jadwal Kegiatan</td><td>Medium</td></tr>
+          <tr><td>4</td><td>Pengunjung melihat informasi tenaga pengajar</td><td>Tim Pengajar</td><td>Medium</td></tr>
+          <tr><td>5</td><td>Pengunjung melihat fasilitas sekolah</td><td>Fasilitas</td><td>Medium</td></tr>
+          <tr><td>6</td><td>Pengunjung mengetahui alur pendaftaran</td><td>Alur Pendaftaran</td><td>High</td></tr>
+          <tr><td>7</td><td>Wali murid mendaftar secara online</td><td>Formulir Pendaftaran Online</td><td><strong>Very High</strong></td></tr>
+          <tr><td>8</td><td>Admin login ke sistem</td><td>Login Administrator</td><td>High</td></tr>
+          <tr><td>9</td><td>Admin mengelola data pendaftaran</td><td>Dashboard Administrator</td><td>High</td></tr>
+          <tr><td>10</td><td>Admin mengelola data peserta didik</td><td>Kelola Data Pendaftaran</td><td>High</td></tr>
+          <tr><td>11</td><td>Admin melihat laporan pendaftaran</td><td>Laporan Data Pendaftaran</td><td>Medium</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Seluruh 11 item selesai diimplementasikan. Fitur berprioritas tinggi (formulir dan dashboard admin) dikerjakan lebih dulu.</p>
+
+    <h3>Alur sprint</h3>
+    <ol class="sprints">
+      <li><div>Analisis kebutuhan, penyusunan product backlog, dan perancangan antarmuka. <span class="dur">1 minggu</span></div></li>
+      <li><div>Halaman Beranda, Profil Sekolah, Jadwal, Tim Pengajar, Fasilitas, dan Alur Pendaftaran. <span class="dur">2 minggu</span></div></li>
+      <li><div>Formulir pendaftaran, login admin, dashboard admin, dan kelola data pendaftaran. <span class="dur">2 minggu</span></div></li>
+      <li><div>Black Box Testing, perbaikan bug, dan finalisasi. <span class="dur">1 minggu</span></div></li>
+    </ol>
+
+    <h3>Strategi pengujian</h3>
+    <dl class="approach">
+      <dt>Black Box Testing</dt>
+      <dd>Memverifikasi keluaran fitur dari masukan tertentu tanpa melihat kode. Cakupan: navigasi, formulir pendaftaran, validasi masukan, tampilan responsif, dan komponen informasi.</dd>
+      <dt>User Acceptance Testing (UAT)</dt>
+      <dd>Dua peran pengguna menjalankan skenario sesuai tugasnya: wali murid (daftar anak sampai konfirmasi) dan admin sekolah (kelola data pendaftaran).</dd>
+      <dt>Survei kepuasan</dt>
+      <dd>20 responden (10 guru atau pengelola, 1 staf administrasi, 9 wali murid) menilai 5 aspek dengan skala Likert 1 sampai 5, lewat Google Form pada 12 dan 15 Juni 2026.</dd>
+    </dl>
+  </div>
+</section>
+
+<section class="block" id="test-case">
+  <div class="wrap">
+    <h2>Test case Black Box</h2>
+    <p>12 skenario pada situs yang berjalan. Saya menambahkan kolom jenis agar terlihat mana skenario positif, mana negatif (masukan sengaja dibuat salah), dan mana pengecekan tampilan.</p>
+    <div class="scroll">
+      <table class="wide">
+        <thead><tr><th>ID</th><th>Skenario</th><th>Jenis</th><th>Langkah</th><th>Hasil diharapkan</th><th>Hasil aktual</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="id">TC-01</td><td>Mengakses halaman beranda</td><td><span class="tag">Positif</span></td><td>Buka tkaqila.my.id di peramban</td><td>Beranda tampil lengkap: hero section, statistik, navigasi</td><td>Beranda tampil dengan seluruh elemen visual lengkap</td><td><span class="chip">&#10003; Lulus</span></td></tr>
+          <tr><td class="id">TC-02</td><td>Navigasi antar menu</td><td><span class="tag">Positif</span></td><td>Klik menu Profil, Pendaftaran, dan Jadwal</td><td>Halaman berpindah ke bagian yang sesuai dengan lancar</td><td>Perpindahan mulus, tanpa pemuatan ulang yang terasa lambat</td><td><span class="chip">&#10003; Lulus</span></td></tr>
+          <tr><td class="id">TC-03</td><td>Mengakses halaman pendaftaran</td><td><span class="tag">Positif</span></td><td>Klik tombol "Daftar Sekarang" di hero section</td><td>Halaman formulir terbuka dengan seluruh kolom tersedia</td><td>Halaman pendaftaran terbuka dan menampilkan formulir lengkap</td><td><span class="chip">&#10003; Lulus</span></td></tr>
+          <tr><td class="id">TC-04</td><td>Mengisi data anak dengan benar</td><td><span class="tag">Positif</span></td><td>Isi seluruh kolom Data Anak (nama, tanggal lahir, jenis kelamin, dan lainnya) dengan data valid</td><td>Kolom terisi tanpa pesan galat</td><td>Seluruh kolom terisi dengan baik, tidak ada pesan galat</td><td><span class="chip">&#10003; Lulus</span></td></tr>
+          <tr><td class="id">TC-05</td><td>Mengisi data orang tua dengan benar</td><td><span class="tag">Positif</span></td><td>Isi seluruh kolom Data Orang Tua/Wali (nama, nomor telepon, alamat, dan lainnya) dengan data valid</td><td>Kolom terisi tanpa pesan galat</td><td>Seluruh kolom terisi dengan baik, tidak ada pesan galat</td><td><span class="chip">&#10003; Lulus</span></td></tr>
+          <tr><td class="id">TC-06</td><td>Mengirim formulir dengan kolom wajib kosong</td><td><span class="tag neg">Negatif</span></td><td>Klik kirim tanpa mengisi kolom wajib</td><td>Muncul pesan validasi yang meminta pengguna melengkapi kolom wajib</td><td>Pesan validasi muncul pada kolom yang belum terisi</td><td><span class="chip">&#10003; Lulus</span></td></tr>
+          <tr><td class="id">TC-07</td><td>Memasukkan format email tidak valid</td><td><span class="tag neg">Negatif</span></td><td>Isi kolom email dengan format salah, contoh "abc@"</td><td>Muncul pesan galat format email</td><td>Pesan validasi muncul dan formulir tidak terkirim</td><td><span class="chip">&#10003; Lulus</span></td></tr>
+          <tr><td class="id">TC-08</td><td>Memasukkan nomor telepon tidak valid</td><td><span class="tag neg">Negatif</span></td><td>Isi kolom telepon dengan huruf atau karakter khusus</td><td>Muncul pesan galat bahwa nomor telepon harus berupa angka</td><td>Validasi menolak masukan non-numerik</td><td><span class="chip">&#10003; Lulus</span></td></tr>
+          <tr><td class="id">TC-09</td><td>Tampilan responsif di perangkat mobile</td><td><span class="tag">Tampilan</span></td><td>Akses lewat telepon pintar (lebar layar 480px atau kurang)</td><td>Elemen menyesuaikan ukuran layar tanpa tumpang tindih</td><td>Tata letak menyesuaikan, teks terbaca, tombol dapat diklik</td><td><span class="chip">&#10003; Lulus</span></td></tr>
+          <tr><td class="id">TC-10</td><td>Tampilan responsif di tablet</td><td><span class="tag">Tampilan</span></td><td>Akses lewat tablet (lebar layar 768px atau kurang)</td><td>Tata letak berubah dari grid empat kolom menjadi dua kolom</td><td>Tata letak beradaptasi dengan benar</td><td><span class="chip">&#10003; Lulus</span></td></tr>
+          <tr><td class="id">TC-11</td><td>Menampilkan indikator status pendaftaran</td><td><span class="tag">Positif</span></td><td>Buka halaman pendaftaran, periksa indikator di bagian atas</td><td>Empat indikator (Total Pendaftar, Menunggu Verifikasi, Sedang Diproses, Diterima) tampil dengan data aktual</td><td>Keempat indikator tampil dengan angka yang sesuai</td><td><span class="chip">&#10003; Lulus</span></td></tr>
+          <tr><td class="id">TC-12</td><td>Klik tautan kembali ke beranda</td><td><span class="tag">Positif</span></td><td>Klik "Kembali ke beranda" di halaman pendaftaran</td><td>Pengguna diarahkan kembali ke beranda</td><td>Perpindahan ke beranda berjalan dengan benar</td><td><span class="chip">&#10003; Lulus</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Skenario UAT: wali murid</h3>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>No</th><th>Skenario</th><th>Hasil diharapkan</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Membuka halaman Website Pendaftaran Online TK Aqila</td><td>Halaman website ditampilkan dengan baik</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+          <tr><td>2</td><td>Mengakses form pendaftaran</td><td>Halaman formulir pendaftaran ditampilkan</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+          <tr><td>3</td><td>Mengisi data anak</td><td>Seluruh data anak dapat diinput tanpa kesalahan</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+          <tr><td>4</td><td>Melanjutkan ke halaman Data Wali Murid</td><td>Sistem menampilkan halaman Data Orang Tua/Wali</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+          <tr><td>5</td><td>Mengisi data wali murid</td><td>Seluruh data wali murid dapat diinput dengan lengkap</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+          <tr><td>6</td><td>Menekan tombol Daftar</td><td>Data berhasil disimpan ke database</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+          <tr><td>7</td><td>Dialihkan ke WhatsApp</td><td>Sistem membuka WhatsApp untuk konfirmasi pendaftaran</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Skenario UAT: admin sekolah</h3>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>No</th><th>Skenario</th><th>Hasil diharapkan</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Login admin</td><td>Dashboard admin ditampilkan</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+          <tr><td>2</td><td>Melihat data pendaftaran</td><td>Data pendaftar ditampilkan</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+          <tr><td>3</td><td>Melihat detail data pendaftar</td><td>Detail data sesuai pendaftar yang dipilih</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+          <tr><td>4</td><td>Mengubah status pendaftaran</td><td>Status berubah dan tersimpan di sistem</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+          <tr><td>5</td><td>Mengelola konten website</td><td>Pengelolaan konten berhasil dan tersimpan</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+          <tr><td>6</td><td>Mengelola jadwal kegiatan</td><td>Perubahan jadwal tersimpan dan tampil di website</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+          <tr><td>7</td><td>Logout</td><td>Sesi admin berakhir dan halaman login tampil</td><td><span class="chip">&#10003; Diterima</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="hasil">
+  <div class="wrap">
+    <h2>Hasil dan analisis</h2>
+    <div class="kpis">
+      <div class="kpi"><b>12 dari 12</b><span>test case Black Box lulus</span></div>
+      <div class="kpi"><b>14 dari 14</b><span>skenario UAT diterima</span></div>
+      <div class="kpi"><b>4,62 dari 5</b><span>rata-rata skor survei</span></div>
+      <div class="kpi"><b>92,4%</b><span>kelayakan keseluruhan, kategori Sangat Layak</span></div>
+    </div>
+
+    <h3>Skor survei per aspek</h3>
+    <div class="bars">
+      <div class="bar"><span class="lab">Antarmuka mudah dipahami</span><span class="val">94,0%</span><div class="track"><div class="fill" style="width:94%"></div></div></div>
+      <div class="bar"><span class="lab">Susunan form tidak membingungkan</span><span class="val">94,0%</span><div class="track"><div class="fill" style="width:94%"></div></div></div>
+      <div class="bar"><span class="lab">Estetika UI (warna, huruf, tata letak), skor terendah</span><span class="val">89,0%</span><div class="track"><div class="fill low" style="width:89%"></div></div></div>
+      <div class="bar"><span class="lab">Responsif di telepon pintar</span><span class="val">93,0%</span><div class="track"><div class="fill" style="width:93%"></div></div></div>
+      <div class="bar"><span class="lab">Kecepatan perpindahan halaman</span><span class="val">92,0%</span><div class="track"><div class="fill" style="width:92%"></div></div></div>
+    </div>
+    <p class="note">Perhitungan: nilai maksimum ideal = 20 responden x 5 pertanyaan x skor 5 = 500. Skor aktual 462, jadi 462 / 500 = 92,4%. Kategori Sangat Layak untuk 81% sampai 100%.</p>
+
+    <h3>Skor per kelompok pengguna</h3>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Kelompok</th><th>Responden</th><th>Skor</th><th>Persentase</th></tr></thead>
+        <tbody>
+          <tr><td>Guru atau pengelola TK</td><td>10</td><td>240 dari 250</td><td>96,0%</td></tr>
+          <tr><td>Staf administrasi</td><td>1</td><td>25 dari 25</td><td>100,0%</td></tr>
+          <tr><td>Wali murid atau orang tua</td><td>9</td><td>197 dari 225</td><td>87,6%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight">
+      <h4>Satu temuan yang tidak saya buang</h4>
+      <p>Satu wali murid memberi skor 5 untuk kemudahan dan susunan form, tetapi skor 1 untuk estetika, responsif, dan kecepatan. Tanpa responden ini kelayakan naik menjadi sekitar 95%. Saya tetap menyertakannya agar hasil objektif.</p>
+      <p>Pola seperti ini di proyek nyata layak ditindaklanjuti: tanyakan perangkat, browser, dan jaringan yang dipakai, lalu coba reproduksi. Dugaan awal saya masalahnya ada di kondisi perangkat atau jaringan tertentu, tetapi ini belum saya verifikasi.</p>
+    </div>
+
+    <h3>Masukan pengguna</h3>
+    <p>11 responden memberi komentar. Yang positif: tampilan bagus, mudah dipahami, dan warna hijau dianggap mewakili identitas sekolah. Masukan perbaikan: tambah foto kegiatan dan prestasi untuk meyakinkan calon wali murid, tampilkan foto profil guru, serta lengkapi fitur dan informasi.</p>
+  </div>
+</section>
+
+<section class="block" id="retrospektif">
+  <div class="wrap">
+    <h2>Retrospektif: yang akan saya lakukan berbeda</h2>
+    <p>Semua skenario lulus, tetapi pengalaman ini menunjukkan celah yang akan saya tutup di proyek berikutnya.</p>
+    <ul class="plain">
+      <li><strong>Lebih banyak skenario negatif dan batas nilai.</strong> Test case saya sebagian besar jalur normal. Berikutnya saya tambahkan batas panjang karakter, tanggal lahir yang tidak masuk akal, pengiriman ganda, dan data duplikat.</li>
+      <li><strong>Test case untuk fitur admin.</strong> Login, kelola data, dan laporan baru tercakup lewat UAT. Saya akan menulis test case tertulis, termasuk login dengan kata sandi salah dan membuka halaman admin tanpa login.</li>
+      <li><strong>Catatan bug yang terdokumentasi.</strong> Sprint 4 memuat perbaikan bug, tetapi temuannya tidak saya catat. Berikutnya setiap defect dicatat dengan langkah reproduksi, hasil diharapkan, hasil aktual, dan tingkat keparahan.</li>
+      <li><strong>Uji lintas browser dan perangkat nyata.</strong> Uji responsif saya baru pada dua lebar layar. Berikutnya saya uji di beberapa browser dan perangkat.</li>
+      <li><strong>Pengujian non-fungsional.</strong> Kecepatan baru dinilai lewat persepsi pengguna. Berikutnya saya ukur waktu muat dan periksa keamanan dasar seperti penanganan input dan sesi admin.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="block" id="keahlian">
+  <div class="wrap">
+    <h2>Keahlian</h2>
+    <dl class="skills">
+      <dt>Pengujian</dt>
+      <dd>Black Box Testing, perancangan test case (positif dan negatif), User Acceptance Testing, analisis survei skala Likert, validasi form, uji tampilan responsif</dd>
+      <dt>Proses</dt>
+      <dd>Agile: user story, product backlog, sprint planning, sprint backlog; dokumentasi hasil pengujian</dd>
+      <dt>Teknis</dt>
+      <dd>Laravel (PHP 8), TailwindCSS, MySQL, Git dan GitHub, Visual Studio Code</dd>
+      <dt>Keamanan</dt>
+      <dd>Fundamental cyber security (sedang diperdalam)</dd>
+    </dl>
+  </div>
+</section>
+</main>
+
+<footer id="kontak">
+  <div class="wrap">
+    <h2>Kontak</h2>
+    <p>Terbuka untuk posisi Software QA tingkat junior.</p>
+    <p>Email: <a href="mailto:fariszaky411@gmail.com">fariszaky411@gmail.com</a></p>
+    <p>LinkedIn: <a href="https://linkedin.com/in/muhammadfariszacky" target="_blank" rel="noopener noreferrer">linkedin.com/in/muhammadfariszacky</a></p>
+    <p>Bogor, Jawa Barat</p>
+  </div>
+</footer>
+
+</body>
+</html>
